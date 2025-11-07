@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Update Arrived</title>
+  <style>
+    body { 
+      font-family: Arial, sans-serif; 
+      background-color: #f9f9f9; 
+      margin: 0; 
+      padding: 20px; 
+    }
+
+    h2 { 
+      text-align: center; 
+      color: #333; 
+    }
+
+    .flash-messages {
+      max-width: 900px;
+      margin: 10px auto;
+    }
+    .flash-messages .error { color: red; }
+    .flash-messages .success { color: green; }
+
+    .container {
+      max-width: 900px; 
+      margin: 20px auto; 
+      background: #fff; 
+      padding: 20px; 
+      border-radius: 8px; 
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1); 
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f2f2f2;
+    }
+
+    input[type="checkbox"] {
+      transform: scale(1.3);
+      margin-right: 5px;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #4CAF50; 
+      color: white; 
+      border: none; 
+      border-radius: 4px; 
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 15px;
+    }
+
+    button:hover { background-color: #45a049; }
+
+    a { 
+      display: block; 
+      text-align: center; 
+      margin-top: 15px; 
+      color: #007BFF; 
+      text-decoration: none; 
+    }
+    a:hover { text-decoration: underline; }
+
+    @media screen and (max-width: 600px) {
+      table, thead, tbody, th, td, tr {
+        display: block;
+      }
+      th {
+        display: none;
+      }
+      td {
+        padding: 10px;
+        position: relative;
+      }
+      td::before {
+        content: attr(data-label);
+        font-weight: bold;
+        display: inline-block;
+        width: 120px;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h2>Update Arrived Status</h2>
+
+  <div class="flash-messages">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <ul>
+        {% for category, message in messages %}
+          <li class="{{ category }}">{{ message }}</li>
+        {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+  </div>
+
+  <form method="POST">
+    <table>
+      <thead>
+        <tr>
+          <th>Arrived</th>
+          <th>Name</th>
+          <th>Phone</th>
+          <th>Second Phone</th>
+          <th>Room</th>
+          <th>Amount</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for cust in customers %}
+        <tr>
+          <td data-label="Arrived">
+            <input type="checkbox" name="arrived" value="{{ cust.name }}" {% if cust.arrived %}checked{% endif %}>
+          </td>
+          <td data-label="Name">{{ cust.name }}</td>
+          <td data-label="Phone">{{ cust.phone }}</td>
+          <td data-label="Second Phone">{{ cust.second_phone or "-" }}</td>
+          <td data-label="Room">{{ cust.room }}</td>
+          <td data-label="Amount">{{ cust.amount }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <button type="submit">Update Arrived</button>
+  </form>
+
+  <a href="{{ url_for('register') }}">Back to Register</a>
+  <form method="POST" action="{{ url_for('delete_all') }}" onsubmit="return confirm('Are you sure you want to delete all data?');">
+    <button type="submit" style="background-color: red; margin-top:10px;">Delete All Data</button>
+  </form>
+
+</div>
+</body>
+</html>
