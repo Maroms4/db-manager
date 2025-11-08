@@ -150,11 +150,23 @@ input[type="checkbox"] {
 /* --- Media Queries (Responsiveness for Tables) --- */
 
 @media screen and (max-width: 600px) {
+    body {
+        padding: 10px;
+    }
+
+    .container {
+        padding: 15px;
+    }
+    
+    input[type="text"], input[type="number"], input {
+        margin-bottom: 10px;
+    }
+
     table, thead, tbody, th, td, tr {
         display: block;
     }
     th {
-        display: none; /* Hide table headers (but not the data labels) */
+        display: none;
     }
     td {
         padding: 10px;
