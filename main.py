@@ -2,14 +2,19 @@ from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
+from dotenv import load_dotenv
 from werkzeug.security import check_password_hash
 import json
 import os
 
+load_dotenv()
+
 # ------------------- App Setup -------------------
 app = Flask(__name__)
-app.secret_key = "supersecretkey"
+app.secret_key = os.environ.get("FLASK_SECRET_KEY")
 
+if not app.secret_key:
+    raise RuntimeError("FLASK_SECRET_KEY not found in environment or .env file.")
 # Flask-Login
 login_manager = LoginManager()
 login_manager.init_app(app)

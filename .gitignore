@@ -1,7 +1,7 @@
 # Ignore specific files
 data.json
 users.json
-
+.env
 # You can also ignore entire directories if you have any
 # /node_modules
 # /logs
