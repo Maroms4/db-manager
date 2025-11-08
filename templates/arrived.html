@@ -1,62 +1,76 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1.0"> 
-  <title>Update Arrived</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1.0"> 
+    <title>Update Arrived</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
 <div class="container">
-  <h2>Update Arrived Status</h2>
 
-  <div class="flash-messages">
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        <ul>
-        {% for category, message in messages %}
-          <li class="{{ category }}">{{ message }}</li>
-        {% endfor %}
-        </ul>
-      {% endif %}
-    {% endwith %}
-  </div>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <div class="view-selector">
+            <label for="view-select" style="font-weight: bold;">Current View:</label>
+            <select id="view-select" onchange="window.location.href = this.value" style="padding: 5px; border-radius: 4px;">
+                {% for view in all_views %}
+                    <option value="{{ url_for('select_view', view_name=view) }}" 
+                            {% if view == current_view %}selected{% endif %}>
+                        {{ view }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        <a href="{{ url_for('manage_views') }}" style="display: inline; margin: 0; font-size: 14px;">Manage Views</a>
+    </div>
+    <h2>Update Arrived Status ({{ current_view }})</h2> 
+    
+    <div class="flash-messages">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <ul>
+            {% for category, message in messages %}
+              <li class="{{ category }}">{{ message }}</li>
+            {% endfor %}
+            </ul>
+          {% endif %}
+        {% endwith %}
+    </div>
+    <form method="POST">
+        <table>
+          <thead>
+            <tr>
+              <th>Arrived</th>
+              <th>Name</th>
+              <th>Phone</th>
+              <th>Second Phone</th>
+              <th>Room</th>
+              <th>Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for cust in customers %}
+            <tr>
+              <td data-label="Arrived">
+                <input type="checkbox" name="arrived" value="{{ cust.name }}" {% if cust.arrived %}checked{% endif %}>
+              </td>
+              <td data-label="Name">{{ cust.name }}</td>
+              <td data-label="Phone">{{ cust.phone }}</td>
+              <td data-label="Second Phone">{{ cust.second_phone or "-" }}</td>
+              <td data-label="Room">{{ cust.room }}</td>
+              <td data-label="Amount">{{ cust.amount }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        <button type="submit">Update Arrived</button>
+    </form>
 
-  <form method="POST">
-    <table>
-      <thead>
-        <tr>
-          <th>Arrived</th>
-          <th>Name</th>
-          <th>Phone</th>
-          <th>Second Phone</th>
-          <th>Room</th>
-          <th>Amount</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for cust in customers %}
-        <tr>
-          <td data-label="Arrived">
-            <input type="checkbox" name="arrived" value="{{ cust.name }}" {% if cust.arrived %}checked{% endif %}>
-          </td>
-          <td data-label="Name">{{ cust.name }}</td>
-          <td data-label="Phone">{{ cust.phone }}</td>
-          <td data-label="Second Phone">{{ cust.second_phone or "-" }}</td>
-          <td data-label="Room">{{ cust.room }}</td>
-          <td data-label="Amount">{{ cust.amount }}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-
-    <button type="submit">Update Arrived</button>
-  </form>
-
-  <a href="{{ url_for('register') }}">Back to Register</a>
-  <form method="POST" action="{{ url_for('delete_all') }}" onsubmit="return confirm('Are you sure you want to delete all data?');">
-    <button type="submit" style="background-color: red; margin-top:10px;">Delete All Data</button>
-  </form>
-
+    <a href="{{ url_for('register') }}">Back to Register</a>
+    <form method="POST" action="{{ url_for('delete_all') }}" onsubmit="return confirm('Are you sure you want to delete all data in view {{ current_view }}?');">
+        <button type="submit" style="background-color: red; margin-top:10px;">Delete All Data in View</button>
+    </form>
+    <a href="{{ url_for('logout') }}" style="color: #e74c3c;">Logout</a>
+    
 </div>
 </body>
 </html>

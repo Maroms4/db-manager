@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1.0"> 
+    <title>Manage Data Views</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="container box">
+    <h2>Manage Data Views</h2>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% endwith %}
+
+    <h3>Create New View</h3>
+    <form method="POST" action="{{ url_for('manage_views') }}">
+        <label for="new_view_name">View Name:</label>
+        <input type="text" name="view_name" id="new_view_name" required>
+        <button type="submit" name="action" value="create" style="background-color: #007BFF; margin-top: 5px;">Create View</button>
+    </form>
+
+    <hr style="margin: 20px 0;">
+
+    <h3>Existing Views</h3>
+    {% if views %}
+    <ul>
+        {% for view in views %}
+        <li style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding: 5px; border-bottom: 1px dotted #ccc;">
+            <span style="font-weight: bold;">{{ view }}</span>
+            
+            <div style="display: flex; gap: 10px;">
+                <a href="{{ url_for('select_view', view_name=view) }}" style="display: inline; margin: 0; color: #4CAF50;">Select</a>
+                
+                <form method="POST" action="{{ url_for('manage_views') }}" style="margin: 0;">
+                    <input type="hidden" name="view_name" value="{{ view }}">
+                    <button type="submit" name="action" value="delete" 
+                        {% if view == default_view %}disabled title="Cannot delete default view"{% endif %}
+                        onclick="return confirm('Are you sure you want to delete the view {{ view }} and all its data?')"
+                        style="width: auto; padding: 5px 10px; background-color: #e74c3c; margin: 0; font-size: 14px;">
+                        Delete
+                    </button>
+                </form>
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>No views exist.</p>
+    {% endif %}
+
+    <a href="{{ url_for('register') }}">Back to Register</a>
+
+</div>
+</body>
+</html>

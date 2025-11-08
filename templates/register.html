@@ -1,67 +1,73 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1.0"> 
-  <title>Register Customer</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-  <script>
-    function toggleSecondPhone() {
-        const amount = document.getElementById("amount").value;
-        const secondDiv = document.getElementById("second_div");
-        if (parseInt(amount) > 6) {
-            secondDiv.style.display = "block";
-        } else {
-            secondDiv.style.display = "none";
+    <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1.0"> 
+    <title>Register Customer</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script>
+        function toggleSecondPhone() {
+            const amount = document.getElementById("amount").value;
+            const secondDiv = document.getElementById("second_div");
+            if (parseInt(amount) > 6) {
+                secondDiv.style.display = "block";
+            } else {
+                secondDiv.style.display = "none";
+            }
         }
-    }
-
-    function checkTotal(event) {
-        const amount = parseInt(document.getElementById("amount").value) || 0;
-        const currentTotal = {{ total | default(0) }};  // Python total injected here
-        if (currentTotal + amount > 50) {
-            alert(`Cannot register: total people would exceed 50! (current total: ${currentTotal})`);
-            event.preventDefault();
+    
+        function checkTotal(event) {
+            const amount = parseInt(document.getElementById("amount").value) || 0;
+            // The template variable 'total' is now specific to the current view
+            const currentTotal = {{ total | default(0) }}; 
+            if (currentTotal + amount > 50) {
+                alert(`Cannot register: total people would exceed 50 for this view! (current total: ${currentTotal})`);
+                event.preventDefault();
+            }
         }
-    }
-
-  </script>
+    </script>
 </head>
 <body>
 <div class="container">
-  <h2>Register Customer</h2>
-
-  {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-      <ul>
-      {% for category, message in messages %}
-        <li class="{{ category }}">{{ message }}</li>
-      {% endfor %}
-      </ul>
-    {% endif %}
-  {% endwith %}
-
-  <form method="POST" onsubmit="checkTotal(event)">
-    <label>Name: *</label>
-    <input type="text" name="name" required>
-
-    <label>Phone: *</label>
-    <input type="text" name="phone" required>
-
-    <label>Room number: *</label>
-    <input type="number" name="room" required>
-
-    <label>Amount of people: *</label>
-    <input type="number" name="amount" id="amount" required oninput="toggleSecondPhone()">
-
-    <div id="second_div" style="display:none;">
-      <label>Second Phone:</label>
-      <input type="text" name="second_phone">
+    
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <div class="view-selector">
+            <label for="view-select" style="font-weight: bold;">Current View:</label>
+            <select id="view-select" onchange="window.location.href = this.value" style="padding: 5px; border-radius: 4px;">
+                {% for view in all_views %}
+                    <option value="{{ url_for('select_view', view_name=view) }}" 
+                            {% if view == current_view %}selected{% endif %}>
+                        {{ view }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        <a href="{{ url_for('manage_views') }}" style="display: inline; margin: 0; font-size: 14px;">Manage Views</a>
     </div>
+    <h2>Register Customer ({{ current_view }})</h2> {% with messages = get_flashed_messages(with_categories=true) %}
+    {% endwith %}
 
-    <button type="submit">Register</button>
-  </form>
+    <form method="POST" onsubmit="checkTotal(event)">
+        <label>Name: *</label>
+        <input type="text" name="name" required>
 
-  <a href="{{ url_for('arrived') }}">Go to Arrived Page</a>
-</div>
+        <label>Phone: *</label>
+        <input type="text" name="phone" required>
+
+        <label>Room number: *</label>
+        <input type="number" name="room" required>
+
+        <label>Amount of people: *</label>
+        <input type="number" name="amount" id="amount" required oninput="toggleSecondPhone()">
+
+        <div id="second_div" style="display:none;">
+            <label>Second Phone:</label>
+            <input type="text" name="second_phone">
+        </div>
+
+        <button type="submit">Register</button>
+    </form>
+
+    <a href="{{ url_for('arrived') }}">Go to Arrived Page</a>
+    <a href="{{ url_for('logout') }}" style="color: #e74c3c;">Logout</a> </div>
 </body>
 </html>
