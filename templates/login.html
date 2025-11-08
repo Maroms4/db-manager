@@ -3,14 +3,7 @@
 <head>
   <meta charset="utf-8">
   <title>Login</title>
-  <style>
-    body { font-family: Arial; display:flex; justify-content:center; padding:40px; background:#f9f9f9;}
-    .box { background:#fff; padding:20px; border-radius:8px; width:320px; box-shadow:0 2px 8px rgba(0,0,0,0.08);}
-    input { width:100%; padding:8px; margin:8px 0; border-radius:4px; border:1px solid #ccc; }
-    button { width:100%; padding:10px; background:#2b7cff; color:#fff; border:none; border-radius:4px;}
-    .error{color:#fff;background:#e74c3c;padding:8px;border-radius:4px;margin-bottom:8px;}
-    .success{color:#fff;background:#2ecc71;padding:8px;border-radius:4px;margin-bottom:8px;}
-  </style>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
   <div class="box">
